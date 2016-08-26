@@ -28,10 +28,29 @@ public with sharing class ORISPHelper {
 		//stub
 	}
 	
+	
 	public Boolean canFinalizeISP {
 		get {
-			 return this.isp.Status__c == 'Inactive Draft' 
-			 		&& this.isp.ACK_isValid__c
+			 return this.isp.Status__c == 'Inactive Draft'
+			 		&& this.isp.PCI_HD_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_CN_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_LL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_PE_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_SL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_CS_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_RL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_HW_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_FL_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_PA_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_CC_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_SR_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_MH_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_BH_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_TP_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_ADT_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_EM_Errors__c == 'No Errors'
+			 		&& this.isp.PCI_OP_Errors__c == 'No Errors'
+			 		//&& this.isp.ACK_isValid__c
 			 		&& this.isp.Agreement_isValid__c
 			 		&& this.isp.CDP_IsValid__c
 			 		&& this.isp.CCMS_isValid__c
@@ -52,7 +71,8 @@ public with sharing class ORISPHelper {
 	
 	public Boolean canReviseISP {
 		get {
-			return this.isp.Status__c == 'Active Final';
+			List<Case_management_Plan__c> latestDraft = [SELECT Id FROM Case_management_plan__c WHERE Service_Assignment__c = :this.isp.Service_Assignment__c AND Status__c= 'Inactive Draft' AND createdDate > :this.isp.createdDate LIMIT 1];
+			return latestDraft.isEmpty() && this.isp.Status__c == 'Active Final';
 		}
 	}
 	
@@ -78,13 +98,13 @@ public with sharing class ORISPHelper {
 		PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
-		if(page.getUrl().Contains('apex/ORcombinedISP')){
+		if(page.getUrl().ContainsignoreCase('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', this.isp.Id);
 			params.put('section', '');
 			page.setRedirect(true);
 			return page;
-		}else if(page.getUrl().Contains('apex/ORriskTool')){
+		}else if(page.getUrl().ContainsignoreCase('apex/ORriskTool')){
 			params.put('id', this.isp.Id);
 			params.put('category', '');
 			params.put('evalType', 'Risk Identification Tool');
@@ -100,20 +120,28 @@ public with sharing class ORISPHelper {
 		SavePoint sp = Database.SetSavePoint(); //initialize the save point here
 		PageReference page = ApexPages.currentPage();
 		string ispID = this.isp.id;
+		FieldSet donotRevise =  SObjectType.Case_management_Plan__c.FieldSets.Do_Not_Revise;
+		
 		Case_Management_Plan__c newIsp = new case_Management_plan__c();
-		if(page.getUrl().Contains('apex/ORcombinedISP')){
+		if(page.getUrl().ContainsignoreCase('apex/ORcombinedISP')){
 			newIsp = this.isp.clone(false);
-		}else if(page.getUrl().Contains('apex/ORriskTool')){
+			
+		}else if(page.getUrl().ContainsignoreCase('apex/ORriskTool')){
 			string query = Utility.getCreatableFieldsSOQL('Case_Management_Plan__c', 'Id =:ispID');
-			system.debug('Query>>>>>>>>>'+query);
+			system.debug('Query>>>>>>>>>1111'+query);
 			Case_Management_Plan__c thisISP = Database.Query(query);
 			newIsp = thisISP.clone(false);
 		}
 		
 		newIsp.Status__c = 'Inactive Draft';
+		for(Schema.FieldSetMember f : donotRevise.getFields()) {
+			newIsp.put(f.getFieldPath(), f.getType() ==  Schema.DisplayType.Boolean ? false : null);
+		}
+		
 		insert newIsp;
-		/*this.isp.Status__c = 'Inactive Final';
-		update this.isp;*/
+		
+		
+		
 		
 		
 		list<Evaluation_Response__c> clonedResponses   = new List<Evaluation_Response__c>(); //clone evaluation response records
@@ -126,7 +154,7 @@ public with sharing class ORISPHelper {
        
         String respQuery ='SELECT ';
         for(Schema.FieldSetMember f : copyresponseFields.getFields()) {
-            respQuery +=f.getFieldPath() + ', ';
+            respQuery +=f.getFieldPath() + ',';
         }
 		
         respQuery += 'Name, RecordType.Name FROM Evaluation_Response__c WHERE Case_Management_Plan__c =:ispID AND RecordType.DeveloperName IN:responseRectypes';
@@ -181,13 +209,13 @@ public with sharing class ORISPHelper {
 	//	PageReference page = ApexPages.currentPage();
 		Map<String, String> params = page.getParameters();
 		params.clear();
-		if(page.getUrl().Contains('apex/ORcombinedISP')){
+		if(page.getUrl().ContainsignoreCase('apex/ORcombinedISP')){
 			params.put('mode', 'EDIT');
 			params.put('id', newIsp.Id);
-			params.put('section', '');
+			params.put('section', 'hdSection');
 			page.setRedirect(true);
 			return page;
-		}else if(page.getUrl().Contains('apex/ORriskTool')){
+		}else if(page.getUrl().ContainsignoreCase('apex/ORriskTool')){
 			params.put('id', newIsp.Id);
 			params.put('category', '');
 			params.put('evalType', 'Risk Identification Tool');
@@ -214,13 +242,13 @@ public with sharing class ORISPHelper {
     	for(string s : cats){
     		if(catValueMap.containsKey(s) && !catValueMap.get(s).isEmpty()){
     			if(catValueMap.get(s).Contains(false)){
-    				errorMap.put(s,'-error');
+    				errorMap.put(s,'error');
     			}else{
-    				errorMap.put(s,'-success');
+    				errorMap.put(s,'success');
     			}
     			
     		}else{
-    			errorMap.put(s,'');
+    			errorMap.put(s,'warning');
     		}
     	}
     	
@@ -273,5 +301,245 @@ public with sharing class ORISPHelper {
 		return null;
 		
 	}
+	
+	
+	public String PCIPanelStatus { get { 
+		if (this.isp.Status__c.Contains('Final'))
+			return ('success');
+		
+		integer numBlank = 0;
+		
+		// check for at least 1 error and keep track of # blank on the way	
+		if ( this.isp.PCI_HD_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_HD_Errors__c) )
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_CN_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_CN_Errors__c) )
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_LL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_LL_Errors__c))
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_PE_Errors__c != 'No Errors' )
+			if (  !String.isBlank(this.isp.PCI_PE_Errors__c) )
+				return ('error');
+			else
+				numBlank +=1 ;
+					
+		if (  this.isp.PCI_SL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_SL_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.PCI_CS_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_CS_Errors__c))
+				return ('error');
+			else
+				numBlank += 1;
+				
+		if (  this.isp.PCI_RL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_RL_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+					
+		if (  this.isp.PCI_HW_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_HW_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.PCI_FL_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_FL_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_PA_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_PA_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_CC_Errors__c != 'No Errors' )
+			if (  !String.isBlank(this.isp.PCI_CC_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+					
+		if (  this.isp.PCI_SR_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_SR_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_MH_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_MH_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_BH_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_BH_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_TP_Errors__c != 'No Errors' )
+			if (!String.isBlank(this.isp.PCI_TP_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_ADT_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_ADT_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_EM_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_EM_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+				
+		if (  this.isp.PCI_OP_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PCI_OP_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+			
+		// check for at least 1 incomplete sections
+		if ( numBlank > 0 )
+			return ('warning');
+			
+		// if we're still here, then they're all no-error
+		return ('success');
+		
+	} }
+	
+	public String RiskPanelStatus { get {
+		if (this.isp.Status__c.Contains('Final'))
+			return ('success');
+		
+		integer numBlank = 0;
+		
+		for(string s: errorMap.keySet()){
+    		if( errorMap.get(s) == 'error'){
+    			return('error');
+    		} else {
+    			if ( errorMap.get(s) == 'warning' ) {
+    				numBlank += 1;
+    			} 
+    		}
+		}
+		
+		if ( numBlank > 0 )
+			return 'warning';
+		else
+			return 'success';
+			
+	}}
+	
+	public string ISPPanelStatus { get {
+		
+		if (this.isp.Status__c.Contains('Final'))
+			return ('success');
+		
+		integer numBlank = 0;
+		if (  this.isp.PD_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.PD_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Profile_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Profile_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Desired_outcomes_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Desired_outcomes_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.CDP_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.CDP_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Risk_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Risk_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.CCMS_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.CCMS_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.SPPC_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.SPPC_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Kplan_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Kplan_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Waiver_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Waiver_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.KPR_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.KPR_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Differences_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Differences_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+
+		if ( numBlank > 0 )
+			return 'warning';
+		else
+			return 'success';
+	}}
+	
+	
+	public string ContribPanelStatus { get {
+
+		integer numBlank = 0;
+				
+		if (  this.isp.Leg_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Leg_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+		if (  this.isp.Agreement_Errors__c != 'No Errors' )
+			if ( !String.isBlank(this.isp.Agreement_Errors__c))
+				return ('error');
+			else
+				numBlank +=1 ;
+			
+		// check for at least 1 incomplete sections
+		if ( numBlank > 0 )
+			return ('warning');
+			
+		// if we're still here, then they're all no-error
+		return ('success');
+		
+	}}
+	
     
 }

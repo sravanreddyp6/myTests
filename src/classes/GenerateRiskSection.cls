@@ -336,7 +336,7 @@ public with sharing class GenerateRiskSection {
 					if (e.length__c >= 3000) {
 						newHtmlFld += '<td class="dataCol" style="vertical-align: top" ><div style="display: table-row;">';
 						newHtmlFld += reqFldHtml;
-						newHtmlFld += '<textarea  rows="5" cols="40" id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
+						newHtmlFld += '<textarea  rows="10" cols="100" id="' + e.htmlid__c + '"  name="' + e.id + '" data-composite="' + e.Composite__c + '">';
 						if (mapEvalValues.ContainsKey(e.id)) {
 							strVal = mapEvalValues.get(e.id).Text_Over_250__c.escapeHtml4();
 							if (strVal != null && strVal != '')
@@ -524,7 +524,7 @@ public with sharing class GenerateRiskSection {
 		String htmlTable2 ='';
 		String composite = cat + '~' + subCategory;
 		 
-		htmlTable2 += '<table data-composite="' + composite  + '" style="width:100%;"><tr><th style="width:15%;"></th><th style="width:25%;"></th><th style="width:15%;"></th><th style="width:25%;"></th></tr><tr>';
+		htmlTable2 += '<table data-composite="' + composite  + '" style="width:100%;"><tr><th style="width:35%;"></th><th style="width:65%;"></th></tr><tr>';
 		
 		Integer i = 0;
 		for (String s : htmlControls){

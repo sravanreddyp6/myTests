@@ -7,6 +7,78 @@
 		Selector: 'Selector'
 	};
 
+	// This is a namespaced version of openModalDialog, for use with jQuery UI version 1
+	window.CommonJS.legacyOpenModalDialogById = function (dialogId, formId, opts) {
+		opts = Object.assign({
+			dClass: "fixed-dialog",
+			width: 800,
+			hideCloseButton: true,
+			titleString: "",
+			maxHeight: $(window).height()*3/4,
+		}, opts);
+
+		var $element = $(document.getElementById(dialogId));
+		if ($element.dialog("isOpen") !== true) {
+			$element.dialog({
+				dialogClass: opts.dClass,
+				title: opts.titleString,
+				modal: true,
+				width: opts.width,
+				resizable: false,
+				minHeight: 0,
+				dialogClass: 'modalDialog',
+				zIndex: 200, // so that datepickers appear on top of the dialogs
+				closeOnEscape: false,
+				maxHeight: opts.maxHeight,
+				position: {
+					my: "center top",
+					at: "center top"
+				},
+				open: function () {
+					// Don't allow "background" to be scrollable when dialogs
+					// are open.
+					$("body").css("overflow", "hidden");
+
+					$(this).css({'max-height': opts.maxHeight, 'overflow-y': 'auto'});
+				}
+			}).parent().appendTo($(document.getElementById(formId)));
+			if (opts.hideCloseButton) {
+				$element.parent().find('a.ui-dialog-titlebar-close').remove();
+			}
+		}
+	};
+
+	// This is a namespaced version of closeModalDialog, for use with jQuery UI version 1
+	window.CommonJS.legacyCloseModalDialogById = function (dialogId) {
+		var $element = $(document.getElementById(dialogId));
+		$element.dialog('destroy');
+		// Allow "background" to be scrollable when dialogs are closed.
+		$("body").css("overflow", "auto");
+	};
+
+	window.CommonJS.setUpRequiredFields = function () {
+		$('.requiredIndicator').each(function (index, el) {
+			var $el = $(el);
+			var $elToWrap;
+			var $parent = $el.parent();
+			if ($parent.is("td")) {
+				$elToWrap = $el;
+			} else {
+				$elToWrap = $parent;  // e.g. for date picker
+			}
+			if ($elToWrap.parent().hasClass("requiredInput")) {
+				return;
+			}
+			var elId = $el.prop("id");
+			if (!elId) {
+				elId = Math.random().toString(36).substr(2, 5);
+			}
+			$elToWrap
+				.wrap('<div class="requiredInput" id="requiredInput-' + elId + '">')
+				.before('<div class="requiredBlock" id="requiredBlock-'+ elId + '"></div>');
+		});
+	};
+
 	window.scrollToTop = function() {
 		window.scrollTo(0, 0);
 	};
@@ -214,9 +286,9 @@
 	// will be shown/hidden.
 	window.applyShowHideRulesToField = function(element) {
 		var $element = $(element);
-        if ($element.prop('disabled')) {
-            return;
-        }
+		if ($element.prop('disabled')) {
+			return;
+		}
 		if ($element.attr('multiple') == 'multiple' && !$element.attr('id').endsWith('_selected') & !$element.attr('id').endsWith('_unselected')) {
 			// This is the hidden select field for multi-picklist that gets
 			// populated automagically by Salesforce when items are moved from
@@ -335,6 +407,5 @@
 			$target.find("input[type=checkbox]").prop("checked", false).trigger("change");
 			$target.trigger("change");
 		});
-
-	}
+	};
 })(jQuery.noConflict());

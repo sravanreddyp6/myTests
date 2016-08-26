@@ -66,24 +66,90 @@ var tableToExcel = (function() {
 	<apex:pageMessages ></apex:pageMessages>
 	<apex:actionregion >
 		
-		<apex:pageBlockSection columns="1">
-			<apex:outputPanel layout="none" id="radioButtonPanel">
-				<apex:outputLabel styleclass="labelCol" value="Status Selection" for="statusSelector" />
-				<apex:selectList value="{!providerStatus}" id="statusSelector" multiselect="true">
-					<apex:selectOptions value="{!statusValues}" />
+		
+		<apex:pageBlockSection id="statuses" title="Provider Status" columns="1" collapsible="false" >
+	    <apex:outputpanel >
+	    	<table>
+		        <tr><td>
+		        <apex:selectList id="selectstatus" value="{!selectedStatus}" size="4" multiselect="true" style="min-width:235px">
+		            <apex:selectOptions value="{!statuslist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddStatus}" 
+						            reRender="statuses" 
+						            status="myStatus"
+						            style="height: 25px; width: 35px;"/><br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemoveStatus}" 
+						            reRender="statuses" 
+						            status="myStatus"
+						            style="height: 25px; width: 50px;"/>		             
+		        </td><td>
+		        <apex:selectList id="select2stat" value="{!selected2status}" size="4" multiselect="true" style="min-width:235px">
+		        	<apex:selectOptions value="{!selectstatuslist}" />
 				</apex:selectList>
-				<apex:outputLabel styleclass="labelCol" value="Brokerage Selection" for="brokerageSelector" />
-				<apex:selectList value="{!brokerages}" id="brokerageSelector" multiselect="true">
-					<apex:selectOptions value="{!brokerageOptions}" />
+		        </td></tr>
+	 		</table>                   
+		</apex:outputPanel>
+       </apex:pageBlockSection>	
+		<apex:pageBlockSection id="programs" title="Brokerages" columns="1" collapsible="false" >
+	    <apex:outputpanel >
+	    	<table>
+		        <tr><td>
+		        <apex:selectList id="selectprograms" value="{!selectedPrograms}" size="4" multiselect="true" style="min-width:235px">
+		            <apex:selectOptions value="{!programslist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddPrograms}" 
+						            reRender="programs" 
+						            status="myStatus"
+						            style="height: 25px; width: 35px;"/><br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemovePrograms}" 
+						            reRender="programs" 
+						            status="myStatus"
+						            style="height: 25px; width: 50px;"/>		             
+		        </td><td>
+		        <apex:selectList id="select2" value="{!select2PrmIds}" size="4" multiselect="true" style="min-width:235px">
+		        	<apex:selectOptions value="{!select2list}" />
 				</apex:selectList>
-		    </apex:outputPanel>
-			  
-			<apex:pageBLockSectionItem >
+		        </td></tr>
+	 		</table>                   
+		</apex:outputPanel>
+       </apex:pageBlockSection> 
+       <apex:pageBlockSection id="types" title="Provider Types" columns="1" collapsible="false" >
+	    <apex:outputpanel >
+	    	<table>
+		        <tr><td>
+		        <apex:selectList id="selecttypes" value="{!selectedTypes}" size="4" multiselect="true" style="min-width:235px">
+		            <apex:selectOptions value="{!typelist}"/>
+		        </apex:selectList>
+		        </td><td style="vertical-align:middle">
+		        <apex:commandButton value="add" 
+						            action="{!AddTypes}" 
+						            reRender="types" 
+						            status="myStatus"
+						            style="height: 25px; width: 35px;"/><br/>
+		        <apex:commandButton value="remove" 
+						            action="{!RemoveTypes}" 
+						            reRender="types" 
+						            status="myStatus"
+						            style="height: 25px; width: 50px;"/>		             
+		        </td><td>
+		        <apex:selectList id="select2" value="{!selected2Types}" size="4" multiselect="true" style="min-width:235px">
+		        	<apex:selectOptions value="{!selectTypeList}" />
+				</apex:selectList>
+		        </td></tr>
+	 		</table>                   
+		</apex:outputPanel>
+       </apex:pageBlockSection> 
+       <apex:pageBlockSection >
 				<apex:outputPanel layout="none" id="buttonPanel">
 			       	<apex:commandButton value="Run" action="{!runRpt}" />&nbsp;
 			      	<apex:commandButton value="Reset" action="{!cancelToNewRun}" />
 			    </apex:outputPanel>
-			</apex:pageBLockSectionItem>
 		</apex:pageBlockSection>
 		
 	</apex:actionregion>
@@ -91,11 +157,12 @@ var tableToExcel = (function() {
 	
     <apex:pageBlock title="Results" id="results">
         <apex:pageBlockButtons >
-            <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'W3C Example Table')" value="Export to Excel"/></div></div>
+            <div><div style="float: right"><input class="btn" type="button" onclick="tableToExcel('mytbl', 'Provider Tracking')" value="Export to Excel"/></div></div>
         </apex:pageBlockButtons>
         <table id="mytbl" width="100%" cellpadding="0" cellspacing="0">
             <thead>
                 <tr>
+                    <th class="headRow">Action</th>
                     <th class="headRow">First Name</th>
                     <th class="headRow">Last Name</th>
                     <th class="headRow">Gender</th>
@@ -123,6 +190,7 @@ var tableToExcel = (function() {
             </thead>
 	        <apex:repeat value="{!rptData}" var="row">
 	            <tr>
+	            	<td><a href="/{!row.Id}">View</a></td>
 					<td>{!row.First_Name__c}</td>
 					<td>{!row.Last_Name__c}</td>
 					<td>{!row.Gender__c}</td>
@@ -139,8 +207,8 @@ var tableToExcel = (function() {
 					<td>{!row.Primary_Email__c}</td>
 					<td>{!row.Provider_Type__c}</td>
 					<td>{!row.Company_Agency_Name__c}</td>
-					<td>{!row.Brokerage__r.Alias__c}</td>
-					<td>{!row.Counties_Served__c}</td>
+                    <td><apex:outputText value="{!row.Brokerage__r.ProgramID__c + ' - ' + row.Brokerage__r.Location_Nickname__c}" style="white-space: nowrap;" /></td>
+					<td>{! SUBSTITUTE(row.Counties_Served__c, ';','; ')}</td>
 					<td>{!row.Services_Provided__c}</td>
 					<td>{!row.Status__c}</td>
 					<td>
