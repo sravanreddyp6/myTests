@@ -1,0 +1,258 @@
+<apex:page controller="GenerateEvalSectionPDF" sidebar="false"
+	readonly="true" showheader="false" applyHtmlTag="false"
+	title="Summary View: {!thisEval.name}" renderAs="PDF">
+	<apex:stylesheet value="{!URLFOR($Resource.mentoresdprint)}" />
+	<head>
+<style>
+hr {
+	color: #ECECEC;
+	background-color: #ECECEC;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	border: none;
+	height: 3px;
+}
+
+.hrSmall {
+	height: 1px;
+	border: 0;
+	color: black;
+	background-color: black;
+}
+
+h1 {
+	font-size: 16px;
+}
+
+h2 {
+	font-size: 16px;
+}
+
+h3 {
+	font-size: 13px;
+	padding-bottom: 0px;
+	margin-bottom: 0px
+}
+
+.pbHeader {
+	font-size: 2em;
+	margin-bottom: 3px;
+	display: block;
+	border-bottom: 3px solid black;
+	border-collapse: collapse;
+	line-height: 1.25%;
+}
+
+.pbSubheader {
+	font-size: 1em;
+	border-collapse: collapse;
+	margin-bottom: 0px !important;
+	padding-bottom: 0px !important;
+}
+
+.labelCol,.label {
+	margin: 10px;
+	font-weight: bold;
+	padding-right: 10px;
+    padding-left: 10px;
+}
+tr td {
+    border-collapse: collapse !important;
+    border-bottom: solid thin !important;
+    border-color: #ececec !important;
+}
+body {
+	font-family: 'Serif';
+	font-size: 12px
+}
+</style>
+<style type="text/css" media="print">
+@page { @top-center { content:element(header);
+
+}
+
+@
+bottom-left {
+	content: element(footer);
+}
+
+}
+div.header {
+	padding: 10px;
+	align: right;
+	width: 100%;
+	position: running(header);
+}
+
+div.footer {
+	display: block;
+	padding: 5px;
+	position: running(footer);
+}
+
+.pagenumber:before {
+	content: counter(page);
+}
+
+.pagecount:before {
+	content: counter(pages);
+}
+
+</style>
+	</head>
+	<div style="width: 100%; text-align: right" class="header">
+		<b>{!pbsObj.FirstName}&nbsp;{!pbsObj.LastName}&nbsp;{!pbsObj.Avatar_ID__c}&nbsp;:&nbsp;{!pbsObj.PBS_Identifier__c}&nbsp;(DOB<apex:outputText value=" {!pbsObj.Birthdate}"/>)</b><b>, Page</b> <span class="pagenumber"></span><b>
+			of </b><span class="pagecount"></span>
+	</div>
+	<apex:form >
+		<apex:pageblock title="{!thisEval.name}">
+			<apex:pageblocksection rendered="{!evalname == 'Head to Toe'}">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Nurse" />
+					<apex:outputText value="{!thisEval.Owner.Name}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Head to Toe Status" />
+					<apex:outputText value="{!thisEval.Head_to_Toe_Status__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Shift Status" />
+					<apex:outputText value="{!thisEval.Status__c}" />
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Start" />
+					<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+				</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+
+				<apex:pageBlockSection rendered="{!evalname == 'Restraint Event'}">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Restraint Status" />
+						<apex:outputText value="{!thisEval.Status__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Created Date" />
+						<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!thisEval.Status__c == 'Applied Alternative to Restraint' || thisEval.Status__c == 'Applied Restraint'}">
+						<apex:outputLabel value="Restrained By" />
+						<apex:outputText value="{!thisEval.Owner.Name}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!thisEval.Shift_Start_Time__c != null}">
+						<apex:outputLabel value="Start" />
+						<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem rendered="{!thisEval.Shift_End_Time__c != null}">
+						<apex:outputLabel value="End" />
+						<c:MilitaryDatetime datetimeval="{!thiseval.Shift_End_Time__c}" />
+					</apex:pageBlockSectionItem>
+				</apex:pageBlockSection>
+
+				<apex:pageBlockSection rendered="{!evalname == 'CNA Workbook'}">
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="CNA" />
+						<apex:outputText value="{!thisEval.Owner.Name}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Status" />
+						<apex:outputText value="{!thisEval.Status__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="Start Time" />
+						<c:MilitaryDatetime datetimeval="{!thiseval.Shift_Start_Time__c}" />
+					</apex:pageBlockSectionItem>
+					<apex:pageBlockSectionItem >
+						<apex:outputLabel value="End Time" />
+						<c:MilitaryDatetime datetimeval="{!thiseval.Shift_End_Time__c}" />
+					</apex:pageBlockSectionItem>
+			</apex:pageblocksection>
+		</apex:pageblock>
+
+		<apex:pageBlock rendered="{!AND(evalName == 'Head to Toe', thisEval.Status__c != 'Draft')}">
+			<apex:pageblocksection >
+				<c:EvaluationResponseTablePDF isPdf="true"
+					parentId="{!$CurrentPage.parameters.evalId}" type="Late Entry Note"
+					formId="{!$Component.wholePage}" uniqueId="LateEntryNote" />
+			</apex:pageblocksection>
+		</apex:pageBlock>
+
+		<apex:outputPanel rendered="{! $CurrentPage.Parameters.Cat == '' || ( $CurrentPage.Parameters.Cat == 'Objective')}">
+			<c:GoalObjReportingPDF parentid="{!thisEval.Id}" />
+		</apex:outputPanel>
+		<apex:repeat value="{!listEntries}" var="entry">
+			<apex:pageBlock >
+				<apex:pageBlockSection title="{!mapEntries[entry].cat } / {!mapEntries[entry].subcat} ({!evalName})"
+					collapsible="false" columns="2">
+
+					<apex:outputText style="font-style:italic"
+						value="{!mapEntries[entry].entryType} by {!mapEntries[entry].owner} on {!mapEntries[entry].created}" />
+					<apex:outputText value="" />
+
+					<apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null'}">
+						<c:EvaluationResponseTablePDF parentID="{!$CurrentPage.parameters.evalId}" type="Wound Detail"
+							formId="{!$Component.wholePage}" uniqueId="wound" isPDF="true"
+							rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null'}" />
+					</apex:pageblocksectionitem>
+
+					<apex:pageblocksectionitem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}">
+						<c:EvaluationResponseTablePDF isPdf="true"
+							parentId="{!$CurrentPage.parameters.evalId}"
+							type="Pressure Ulcer Detail" formId="{!$Component.wholePage}"
+							uniqueId="decubiti"
+							rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null'}"
+							style="text-align:center;"
+							customLabels="[{&quot;field&quot;:&quot;Exudate_Type_Odor_Amount__c&quot;, &quot;label&quot;:&quot;Exudate Type/ Odor/ Amount&quot;}]" />
+					</apex:pageblocksectionitem>
+
+					<apex:pageblocksectionitem rendered="{!mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assessment' }">
+						<c:fallAssessmentComponent Domain="Fall Risk Assessment Domain"
+							rendered="{!mapEntries[entry].compositeKey == 'Fall Risk Assessment~Fall Assessment~null'}"
+							AssessmentName="Fall Risk Assessment" lowerScore="1"
+							medianScore="30" higherScore="31" isPDF="true" />
+						<c:fallAssessmentComponent Domain="Skin Assessment Domain"
+							rendered="{!mapEntries[entry].compositeKey == 'Skin/Body~Skin Assessment~null'}"
+							AssessmentName="Skin Assessment" lowerScore="1" medianScore="14"
+							higherScore="14" isPDF="true" />
+					</apex:pageblocksectionitem>
+
+					<apex:pageBlockSectionItem rendered="{! mapEntries[entry].compositeKey == 'Skin/Body~Wound Detail~null' || mapEntries[entry].compositeKey == 'Skin/Body~Pressure Ulcer Details~null' || mapEntries[entry].subcat == 'Fall Assessment' || mapEntries[entry].subcat == 'Skin Assessment'}">
+						<apex:outputText value="" />
+					</apex:pageBlockSectionItem>
+
+					<apex:repeat value="{!mapEntryHTML[entry]}" var="fld">
+						<apex:pageBlockSectionItem rendered="{!!notApplicableSectionMap[entry]}">
+							<apex:outputText value="{!fld}" escape="false" />
+						</apex:pageBlockSectionItem>
+					</apex:repeat>
+					<apex:inputCheckbox value="{!notApplicableSectionMap[entry]}" selected="true" disabled="true" label="Not Applicable" rendered="{!notApplicableSectionMap[entry]}" />
+
+				</apex:pageBlockSection>
+			</apex:pageBlock>
+		</apex:repeat>
+	</apex:form>
+
+	<!--     Section to display Restraint Reductions -->
+	<apex:repeat value="{!assessments}" var="asmt"
+		rendered="{!(evalname == 'Restraint Event' && subcat == 'Reduction Review') || (evalName == 'Restraint Event' && subcat == null) }">
+		<apex:form >
+			<c:restraintReductionComponent AssessmentId="{!asmt.Id}" isPDF="true" />
+		</apex:form>
+	</apex:repeat>
+
+	<c:TurnsChart id="turnschart" parentID="{!thiseval.id}"
+		rendered="{! ($CurrentPage.Parameters.Cat == '' || $CurrentPage.Parameters.Cat == 'Turns') && evalname == 'CNA Workbook'}" />
+
+
+	<apex:pageBlock rendered="{! evalName == 'CNA Workbook' && $CurrentPage.Parameters.Cat == ''}">
+		<apex:pageblocksection columns="1" title="Approval History"
+			collapsible="false">
+			<apex:datatable style="width: 100%;" value="{!approvalHistory}"
+				var="a">
+				<apex:column value="{!a.actorid}" headervalue="By" />
+				<apex:column value="{!a.stepstatus}" headervalue="Status" />
+				<apex:column value="{!a.comments}" headervalue="Comments" />
+				<apex:column value="{!a.createddate}" headervalue="Date" />
+			</apex:datatable>
+		</apex:pageblocksection>
+	</apex:pageBlock>
+</apex:page>
