@@ -27,7 +27,7 @@
                 title: titleString,
                 modal: true,
                 width: width,
-                resizable: false,
+                resizable: true,
                 minHeight: 0,
                 dialogClass: 'modalDialog',
                 closeOnEscape:false,
