@@ -1,4 +1,5 @@
 <apex:page controller="ProspectInsert3" showHeader="false" sidebar="false">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <style>
 .myForm {
     width:557px;
@@ -67,57 +68,82 @@ color: #333333;
 <apex:pageBlock mode="mainDetail">
     <apex:panelGrid columns="4" rules="groups" style="width:100%;" rowClasses="r1" cellpadding="3" >
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>First Name:</apex:outputLabel>
-        <apex:inputField required="true" styleClass="myinput" value="{!myProspect.First_Name__c}"/>
+        <apex:inputField required="true" styleClass="myinput" id="first" value="{!myProspect.First_Name__c}"/>
 
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Last Name:</apex:outputLabel>
-        <apex:inputField required="true" styleClass="myinput" value="{!myProspect.Name}"/>
+        <apex:inputField required="true" styleClass="myinput" id="last" value="{!myProspect.Name}"/>
 
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Phone: </apex:outputLabel>
-        <apex:inputField styleClass="myinput" required="true" label="Phone" value="{!myProspect.Primary_Phone__c}"/>
+        <apex:inputField styleClass="myinput" required="true" id="phone" label="Phone" value="{!myProspect.Primary_Phone__c}"/>
 
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Email: </apex:outputLabel>
-        <apex:inputField styleClass="myinput" required="true" value="{!myProspect.Email__c}"/>
+        <apex:inputField styleClass="myinput" required="true" id="email" value="{!myProspect.Email__c}"/>
 
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>State:</apex:outputLabel>
-       <apex:inputField styleClass="myinput" required="true" value="{!myProspect.State__c}"/>
+       <apex:inputField styleClass="myinput" required="true" id="state" value="{!myProspect.State__c}"/>
 
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>Zip:</apex:outputLabel>
-        <apex:inputField styleClass="myinput" required="true" value="{!myProspect.Zip__c}"/>
+        <apex:inputField styleClass="myinput" required="true" id="zip" value="{!myProspect.Zip__c}"/>
 </apex:panelGrid>
 <apex:panelGrid columns="2" style="width:100%;" cellspacing="3" rowClasses="r2, r1">
         <apex:outputLabel styleClass="mylabel inline wide"><span class="red">*</span>How did you hear about us?</apex:outputLabel>
         <apex:outputLabel styleClass="mylabel inline wide"><span class="red">*</span>I'm interested in supporting:</apex:outputLabel>
         
         <apex:inputField styleClass="myinputDD" required="true" value="{!myProspect.How_did_you_hear_about_us__c}"/>
-        <apex:inputField styleClass="myinputDD" required="true" value="{!myProspect.Im_intersted_in_supporting__c}"/>
+        <apex:inputField styleClass="myinputDD" required="true" id="program" value="{!myProspect.Im_intersted_in_supporting__c}"/>
 
 </apex:panelGrid> 
-	<div style="text-align:right; width:100%"><span class="red">*</span>= Required Fields</div>
-	 
+    <div style="text-align:right; width:100%"><span class="red">*</span>= Required Fields</div>
+     
     <apex:outputLabel styleClass="mylabel">Comments:</apex:outputLabel><br/>
-    <apex:inputField styleClass="myTxtArea" value="{!myProspect.Prospect_Comments__c}"/>
+    <apex:inputField styleClass="myTxtArea" id="comments" value="{!myProspect.Prospect_Comments__c}"/>
   
     <br/>
     <br/>
     
     <div class="smallfont" style="width:75%;float:left">
- 		<table style="width:100%">
- 		<tr><td style="padding:0px;vertical-align:top">  
+        <table style="width:100%">
+        <tr><td style="padding:0px;vertical-align:top">  
         <apex:inputField value="{!myProspect.Email_Opt_In__c}"  />
-		</td><td>Please check here if you would like to receive occasional updates from The MENTOR Network.
+        </td><td>Please check here if you would like to receive occasional updates from The MENTOR Network.
         Your information will remain private. The MENTOR Network will not sell or share your information.
         </td>
         </Tr>
         </table>
     </div>
-    <div style="float:right"><apex:commandButton action="{!SubmitMADAH}" style="border: none; background: none;" image="{!URLFOR($Resource.PMCShortForm, 'submit.png')}"/></div>
+    <div style="float:right"><apex:commandButton id="btnsubmit" action="{!SubmitMADAH}" style="border: none; background: none;" image="{!URLFOR($Resource.PMCShortForm, 'submit.png')}"/></div>
     
     <br/>
+
 
     
 </apex:pageBlock>    
 </apex:form>
 <br/>
+<script>
+
+jQuery(document).ready(function ($) {
+document.domain = 'force.com';
+$("[id$=btnsubmit]").click(function(){
+	$.ajax({  
+            url:'https://nrfull-mentor-crm.cs20.force.com/services/apexrest/Contacts',  
+            type:'post',
+            data : JSON.stringify({
+					  "firstname" : $('[id$=firstname]').val(),
+					  "lastname" : $('[id$=lastname]').val(),
+					  "statecode" : $('[id$=statecode]').val(),
+					  "zip" : $('[id$=zip]').val(),
+					  "comments" : $('[id$=comments]').val(),
+					  "program" : $('[id$=program]').val(),
+					  "phone" : $('[id$=phone]').val(),
+					  "email" : $('[id$=email]').val()
+		    }) , 
+   			contentType: "application/json; charset=utf-8",   
+   			dataType: 'JSON'
+		});
+	});
+});
+</script>
 <!-- Start Quantcast Tag -->
 <script type="text/javascript"> 
 var _qevents = _qevents || [];
@@ -139,4 +165,5 @@ _qevents.push(
 <img src="//pixel.quantserve.com/pixel/p-43RjHFbjrRnf6.gif?labels=_fp.event.Entry+Form" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
 </noscript>
 <!-- End Quantcast tag -->
+
 </apex:page>
