@@ -262,7 +262,7 @@ content:"\e045";
 									</apex:variable>
 								</td>
 								<td>
-									<a class="btn" id="printIsp"> Print ISP</a>
+									<a class="btn" id="printIsp" onClick="printIsp(); return false; "> Print ISP</a>
 								
 								</td>
 							</tr>
@@ -2716,15 +2716,6 @@ content:"\e045";
 				}
 				
 			}
-			
-			$("#printIsp").click(function(e) {
-        		//download('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}','/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}', '/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
- 
-       			window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
-       			window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
-       			window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
-				
-			});
 		
 		}); 	//---------------end ready-----------------------------
 		
@@ -4039,6 +4030,12 @@ content:"\e045";
 			
 			}
 			
+			printIsp = function(){
+       			window.open('/apex/OR_PCI_Print?Id='+'{!Case_management_Plan__c.id}');
+       			window.open('/apex/ORRisktoolPrint?Id='+'{!Case_management_Plan__c.id}');
+       			window.open('/apex/OR_ISP_PRINT?Id='+'{!Case_management_Plan__c.id}');
+				
+			}
         
            //--------------------------Error handling End--------------------------------------------------------------------------------------
         
