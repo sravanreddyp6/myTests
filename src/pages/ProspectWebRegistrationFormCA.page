@@ -1,5 +1,7 @@
 <!-- Prospect Web Form -->
+
 <apex:page showHeader="false" sidebar="false" controller="ProspectInsert" >
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <style type="text/css">
         .dropDown
@@ -33,27 +35,27 @@
                 <apex:pageMessages /> 
                 
             <apex:pageBlockButtons location="bottom">
-                <apex:commandButton value="Submit"  action="{!Submit}" />
+                <apex:commandButton value="Submit"  id="btnsubmit" action="{!Submit}" />
             </apex:pageBlockButtons>
             
             
             
             <apex:PageBlockSection showHeader="false" columns="2">            
-                    <apex:inputField required="true" taborderhint="1" label="First" value="{!myProspect.First_Name__c}"/>         
-                    <apex:inputField required="true" taborderhint="5" value="{!myProspect.State__c}" > </apex:inputField>
-                    <apex:inputField required="true" taborderhint="2" label="Last" value="{!myProspect.Name}"/>
-                    <apex:inputField required="true" taborderhint="6" value="{!myProspect.Zip__c}"/>
+                    <apex:inputField required="true" taborderhint="1" id="first" label="First" value="{!myProspect.First_Name__c}"/>         
+                    <apex:inputField required="true" taborderhint="5" id="state" value="{!myProspect.State__c}" > </apex:inputField>
+                    <apex:inputField required="true" taborderhint="2" id="last" label="Last" value="{!myProspect.Name}"/>
+                    <apex:inputField required="true" taborderhint="6" id="zip" value="{!myProspect.Zip__c}"/>
             </apex:pageBlockSection>
             
             <apex:pageBlockSection columns="1">                    
-                    <apex:inputField required="true" taborderhint="3" value="{!myProspect.Email__c}"/>
-                    <apex:inputField required="true" taborderhint="4" label="Phone" value="{!myProspect.Primary_Phone__c}"/>            
+                    <apex:inputField required="true" taborderhint="3" id="email" value="{!myProspect.Email__c}"/>
+                    <apex:inputField required="true" taborderhint="4" id="phone" label="Phone" value="{!myProspect.Primary_Phone__c}"/>            
             </apex:pageBlockSection>
                 
             <apex:pageBlockSection showHeader="false" columns="1">
                             <apex:inputField required="true" styleClass="dropDown" value="{!myProspect.How_did_you_hear_about_us__c}"/>               
-                            <apex:inputField required="true" styleClass="dropDown" value="{!myProspect.Im_intersted_in_supporting__c}"/>
-                            <apex:inputField styleClass="txtArea" value="{!myProspect.Prospect_Comments__c}"/>                                
+                            <apex:inputField required="true" styleClass="dropDown" id="program" value="{!myProspect.Im_intersted_in_supporting__c}"/>
+                            <apex:inputField styleClass="txtArea" id="comments" value="{!myProspect.Prospect_Comments__c}"/>                                
                                 <apex:pageBlockSectionItem >
                                     <apex:inputField label=" " value="{!myProspect.Do_NOT_Email__c}"/>
                                 From time to time, we may send information regarding our organization and opportunities to become a Mentor. 
@@ -65,4 +67,28 @@
         </apex:pageBlock>
 </apex:outputPanel>   
     </apex:form>
+    <script>
+
+jQuery(document).ready(function ($) {
+document.domain = 'force.com';
+$("[id$=btnsubmit]").click(function(){
+	$.ajax({  
+            url:'https://nrfull-mentor-crm.cs20.force.com/services/apexrest/Contacts',  
+            type:'post',
+            data : JSON.stringify({
+					  "firstname" : $('[id$=firstname]').val(),
+					  "lastname" : $('[id$=lastname]').val(),
+					  "statecode" : $('[id$=statecode]').val(),
+					  "zip" : $('[id$=zip]').val(),
+					  "comments" : $('[id$=comments]').val(),
+					  "program" : $('[id$=program]').val(),
+					  "phone" : $('[id$=phone]').val(),
+					  "email" : $('[id$=email]').val()
+		    }) , 
+   			contentType: "application/json; charset=utf-8",   
+   			dataType: 'JSON'
+		});
+	});
+});
+</script>
 </apex:page>
