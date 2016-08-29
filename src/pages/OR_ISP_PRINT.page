@@ -3157,12 +3157,12 @@
 													services:</b>
 											</p>
 											<p class="MsoNormal">
-												<apex:outputText value="[ ] Attendant care - ADL / IADL " rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
-												<apex:outputText value="[X] Attendant care - ADL / IADL " rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL')}" />
-												<apex:outputText value="[ ] Skill training " rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
-												<apex:outputText value="[X] Skill training " rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training')}" />
-												<apex:outputText value="[ ] Community Transportation" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
-												<apex:outputText value="[X] Community Transportation" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation')}" />
+												<apex:outputText value="[ ] Attendant care - ADL / IADL " rendered="{!IF( ISBLANK (Case_Management_Plan__c.KPR_Included_Services__c) || !CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL'), true, false)}" />
+												<apex:outputText value="[X] Attendant care - ADL / IADL " rendered="{!IF(CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Attendant care - ADL / IADL'), true, false)}" />
+												<apex:outputText value="[ ] Skill training " rendered="{!IF(ISBLANK (Case_Management_Plan__c.KPR_Included_Services__c) || !CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training'), true, false)}" />
+												<apex:outputText value="[X] Skill training " rendered="{!IF(CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Skill training'), true, false)}" />
+												<apex:outputText value="[ ] Community Transportation" rendered="{!IF(ISBLANK (Case_Management_Plan__c.KPR_Included_Services__c) || !CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation'), true, false)}" />
+												<apex:outputText value="[X] Community Transportation" rendered="{!IF(CONTAINS(Case_Management_Plan__c.KPR_Included_Services__c,'Community Transportation'), true, false)}" />
 											</p>
 										</td>
 										<td width="432" valign="top" style='width: 323.75pt; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0in 5.75pt 0in 5.75pt; height: 30.1pt'>
@@ -3171,10 +3171,10 @@
 													services:</b>
 											</p>
 											<p class="MsoNormal">
-												<apex:outputText value="[ ] Behavior supports " rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
-												<apex:outputText value="[X] Behavior supports " rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports')}" />
-												<apex:outputText value="[ ] Nursing supports" rendered="{!!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
-												<apex:outputText value="[X] Nursing supports" rendered="{!CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports')}" />
+												<apex:outputText value="[ ] Behavior supports " rendered="{!IF( ISBLANK (Case_Management_Plan__c.KPR_Additional_Services__c) || !CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports'), true, false)}" />
+												<apex:outputText value="[X] Behavior supports " rendered="{!IF(CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Behavior supports'), true, false)}" />
+												<apex:outputText value="[ ] Nursing supports" rendered="{!IF( ISBLANK (Case_Management_Plan__c.KPR_Additional_Services__c) || !CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports'), true, false)}" />
+												<apex:outputText value="[X] Nursing supports" rendered="{!IF(CONTAINS(Case_Management_Plan__c.KPR_Additional_Services__c,'Nursing supports'), true, false)}" />
 											</p>
 										</td>
 									</tr>
