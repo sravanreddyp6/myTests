@@ -246,6 +246,30 @@
 			updateDocSelectionAF(treeNode.key, treeNode.isSelected());
 		}
 
+		function getToday() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = mm + '/' + dd + '/' + yyyy;
+            return today;
+        }
+        
+		function chkReceivedDate() {
+            var errors = '';
+            $('#admissionDocumentErrors').html(errors);
+            
+            if ($('[id$=currrentAssocDoc_Status_Date]').val() > getToday()) {
+            	errors += 'Received Date cannot be in the future';
+            }
+            else{
+            	saveAdmissionDoc(true);
+            }
+            
+            $('#admissionDocumentErrors').html(errors);
+            return (errors == '');
+        }
 
 		displayRecievedDate = function() {
 			if ($('select[id$=currrentAssocDoc_Status]').val() != 'Received') {
@@ -705,7 +729,6 @@
 		<!-- Add/edit Admission Documents. -->
 		<apex:outputPanel id="addAdmissionDocumentModal" style="display:none">
 			<apex:pageBlock mode="maindetail"  title="Add/Edit Documents">
-
 				<apex:pageblockButtons location="bottom">
 					<apex:actionStatus id="SaveStatus">
 						<apex:facet name="start">
@@ -714,7 +737,7 @@
 							</div>
 						</apex:facet>
 						<apex:facet name="stop">
-							<input type="button" value="Save" onClick="saveAdmissionDoc(true); " class="btn" />
+							<input type="button" value="Save" onClick="chkReceivedDate(); return false;" class="btn" />
 							<input type="button" value="Cancel" onClick="closeModalDialog('addAdmissionDocumentModal', 'span');cancelSelectionAF(); $('#admissionDocumentErrors').html('');return false;" class="btn" />
 							<!--    <input type="button" value="Close" onClick="closeModalDialog('addAdmissionDocumentModal', 'span'); j$('#admissionDocumentErrors').html('');j$('[id$=tree2]').fancytree('destroy');return false;"  class="btn"/> -->
 						</apex:facet>
