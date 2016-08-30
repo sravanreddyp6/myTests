@@ -59,13 +59,14 @@ color: #333333;
 .red { color:red}
 </style>
 <img src="http://b.collective-media.net/seg/aarp/mentor2" width="1" height="1" /> 
-<apex:form styleClass="myForm" >
+<apex:form styleClass="myForm" id="theForm">
 
 <apex:outputPanel layout="block" styleClass="myHeaderSM" >
 <span class="myHeaderStart">To learn more about becoming a Mentor,</span> please fill out this form and one of our staff members will contact you within three business days.
 </apex:outputPanel>
 <br/>
 <apex:pageBlock mode="mainDetail">
+<apex:actionFunction name="submitMADAH" action="{!SubmitMADAH}" />
     <apex:panelGrid columns="4" rules="groups" style="width:100%;" rowClasses="r1" cellpadding="3" >
         <apex:outputLabel styleClass="mylabel"><span class="red">*</span>First Name:</apex:outputLabel>
         <apex:inputField required="true" styleClass="myinput" id="firstname" value="{!myProspect.First_Name__c}"/>
@@ -123,25 +124,37 @@ color: #333333;
 <script>
 
 jQuery(document).ready(function ($) {
-document.domain = 'force.com';
-$("[id$=btnsubmit]").click(function(){
-	$.ajax({  
+$('[id$=theForm]').submit(function (e) {
+    e.preventDefault();
+    e.returnValue = false;
+
+    var $form = $(this);
+    $.ajax({  
+            context: $form,
             url:'{!$Setup.SystemSettings__c.CRM_Contact_RESTEndpoint__c}',  
             type:'post',
             data : JSON.stringify({
-					  "firstname" : $('[id$=firstname]').val(),
-					  "lastname" : $('[id$=lastname]').val(),
-					  "statecode" : $('[id$=statecode]').val(),
-					  "zip" : $('[id$=zip]').val(),
-					  "comments" : $('[id$=comments]').val(),
-					  "program" : $('[id$=program]').val(),
-					  "phone" : $('[id$=phone]').val(),
-					  "email" : $('[id$=email]').val()
-		    }) , 
-   			contentType: "application/json; charset=utf-8",   
-   			dataType: 'JSON'
-		});
-	});
+                      "firstname" : $('[id$=firstname]').val(),
+                      "lastname" : $('[id$=lastname]').val(),
+                      "statecode" : $('[id$=statecode]').val(),
+                      "zip" : $('[id$=zip]').val(),
+                      "comments" : $('[id$=comments]').val(),
+                      "program" : $('[id$=program]').val(),
+                      "phone" : $('[id$=phone]').val(),
+                      "email" : $('[id$=email]').val()
+            }) , 
+            contentType: "application/json; charset=utf-8",   
+            dataType: 'JSON',
+            complete: function(data) {
+                 // allow continuation of post
+                 this.off('submit');
+                 //this.submit();
+                 submitMADAH();
+            }
+            
+        });
+        
+     });
 });
 </script>
 <!-- Start Quantcast Tag -->
