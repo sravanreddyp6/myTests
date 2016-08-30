@@ -126,7 +126,7 @@ jQuery(document).ready(function ($) {
 document.domain = 'force.com';
 $("[id$=btnsubmit]").click(function(){
 	$.ajax({  
-            url:'https://nrfull-mentor-crm.cs20.force.com/services/apexrest/Contacts',  
+            url:'{!$Setup.SystemSettings__c.CRM_Contact_RESTEndpoint__c}',  
             type:'post',
             data : JSON.stringify({
 					  "firstname" : $('[id$=firstname]').val(),
