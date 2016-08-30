@@ -1326,7 +1326,23 @@
                     <apex:pageBlockSectionItem />
                     <apex:inputField value="{!fundingSource.Given_By__c}" />
                     <apex:inputField value="{!fundingSource.Authorization_Number__c}" />
-                    <apex:inputField value="{!fundingSource.Days_Authorized__c}" />
+                    <apex:inputField value="{!fundingSource.Days_Authorized__c}" rendered="{!ReferralRecordType !='Adult Day Health'}"/>
+                    <apex:pageBlockSectionItem rendered="{!ReferralRecordType =='Adult Day Health'}" >
+                        <apex:outputLabel value="Days Authorized" />
+                        <apex:outputPanel >
+                            <apex:outputLabel value="Mo" for="monChkbox" />
+                            <apex:inputcheckbox id="monChkbox" value="{!monCheck}"/>
+                            <apex:outputLabel value="Tu" for="tueChkbox" />
+                            <apex:inputcheckbox id="tueChkbox" value="{!tueCheck}"/>
+                            <apex:outputLabel value="We" for="wedChkbox" />
+                            <apex:inputcheckbox id="wedChkbox" value="{!wedCheck}"/>
+                            <apex:outputLabel value="Th" for="thurChkbox" />
+                            <apex:inputcheckbox id="thurChkbox" value="{!thurCheck}"/>
+                            <apex:outputLabel value="Fr" for="friChkbox" />
+                            <apex:inputcheckbox id="friChkbox" value="{!friCheck}"/>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
                     <apex:inputField value="{!fundingSource.Days_Authorized_Per_Week__c}" rendered="{!ReferralRecordType =='Adult Day Health'}"/>
                     <apex:pageBlockSectionItem rendered="{!ReferralRecordType == 'NeuroRestorative'}"/>
                     <apex:inputField value="{!fundingSource.Days_Authorized_From__c}" />
