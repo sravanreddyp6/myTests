@@ -94,6 +94,7 @@ public class identityEditNew {
         Id id = ApexPages.currentPage().getParameters().get('ID');
         String retURL = ApexPages.currentPage().getParameters().get('retURL');
         cmpDirPermset = checkCompanyDirectory();
+        isTranportationAdmin();
 //        Alias__c auAlias = [SELECT Alias_Business_Unit__c,Alias_Description__c,Alias_Parent__c,Alias_Region__c,Alias_Service_Line__c,Alias_State__c,Alias_unique__c,Id,Name
 //            FROM Alias__c
 //            WHERE Alias_unique__c =: aliasUser.Alias__c];
@@ -111,7 +112,7 @@ public class identityEditNew {
             Last_Day__c,Last_Name__c,Manager_Email__c,Manager_First_Name__c,Manager_Last_Name__c,Manager_Name__c,
             Mentor_Cell_Phone__c,Middle_Name__c,Name,Network_Username__c,Office_Location__c,Office_Phone__c,Teleo_ID__c,
             Operating_Group__c,Pay_Basis__c,Personal_Email__c,Personal_Phone__c,Salesforce_User_Account__c,
-            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Program_String__c,
+            Service_Line__c,Service_Region__c,Suppress_External_Update__c,Termination_Date__c,Program_String__c,DL_License_Number__c,DL_License_State__c,DL_Date_Valid_From__c,DL_Date_Valid_To__c,
             Unique_Id__c,Work_State_Code__c,Work_State__c,Preferred_First_Name__c,Preferred_Last_Name__c,Manager_Lookup__c,
             Work_City__c,Zip_Code__c,Professional_Title__c,Location_Name__c,Office_Location_2__c,Work_County__c, Office_Location_PickList__c, BAA_Signed__c,Vendor_list__c,Vendor_Name__c,phone_ext__c,Office_Flag__c,
             Account_Number__c, CPR_Expires__c, Discipline__c, GL_Code__c, IC_Agreement_Executed_Date__c, Insurance_Expires__c, License_Expires__c, Notes__c, Personal_City__c,
@@ -673,6 +674,16 @@ public Boolean checkCompanyDirectory(){
 		return false;
 	}
 }
+public Boolean tranportationAdmin {get;set;}
+public void isTranportationAdmin(){
+	PermissionSetAssignment[] assignments = [ SELECT Id, PermissionSet.Name FROM PermissionSetAssignment
+	                                           WHERE AssigneeId = :UserInfo.getUserId() and PermissionSet.Name = 'T_Transportation_Admin'];
+    if (assignments.size() > 0){
+        tranportationAdmin = true;
+	} else { 
+		tranportationAdmin = false;
+    }
+} 
 
  @testVisible class ProxyAttachment {
                 @testVisible Attachment attachment;

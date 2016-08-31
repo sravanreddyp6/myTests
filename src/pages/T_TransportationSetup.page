@@ -1,0 +1,297 @@
+<apex:page Controller="T_TransportationSetup" extensions="T_RoutesController,T_VehiclesController" title="Transportation Setup" standardStylesheets="true" sidebar="false" tabStyle="ESD_Home__tab">
+<apex:stylesheet value="{!URLFOR($Resource.mentoresd,'/mentoresdcss2.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-1.7.2.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.EvaluationJS)}" />
+<apex:includeScript value="{!URLFOR($Resource.jquery, 'js/jquery-ui-1.8.21.custom.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.CommonJS)}" />
+<apex:stylesheet value="{!URLFOR($Resource.jquery, 'css/custom-theme/jquery-ui-1.8.21.custom.css')}" />
+<apex:stylesheet value="{!URLFOR($Resource.jQueryTimePicker,  '/jquery.timepicker.min.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.jQueryTimePicker, '/jquery.timepicker.min.js')}" />
+<style>
+.thinking {
+    opacity: 0.8;
+    background-color: #ccc;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 100000;
+}
+.thinkingwheel {
+    position: absolute;
+    left: 40%;
+    top: 48%;
+    background-color: white;
+    border: 2px solid gray;
+    padding: 2px;
+}
+.ui-timepicker-container.ui-timepicker-standard {
+    z-index: 100000 !important;
+}
+</style>
+<script>
+    afterSave = function (dialogId, keepDialogOpen, functionToOpenNewDialog) {
+        var $dialog = jQuery(document.getElementById(dialogId));
+        if ($dialog.find('[id$=dialogErrors]').children().length == 0) {
+            closeModalDialog(dialogId);
+            if (keepDialogOpen) {
+                (functionToOpenNewDialog)();
+            }
+        }
+    }
+</script>
+<apex:form id="myFrm">
+
+<apex:actionFunction name="newRoute" action="{!newRoute}" status="myStatus" rerender="routeDialogMainBlock" oncomplete="openModalDialog('{!$Component.myFrm:routePgBlk:routePgBlkSec:routeDialog}', 'Add New Route', '{!$Component.myFrm}'); attachRules();" immediate="true"/>
+<apex:actionFunction name="editRoute" action="{!editRoute}" status="myStatus" rerender="routeDialogMainBlock" oncomplete="openModalDialog('{!$Component.myFrm:routePgBlk:routePgBlkSec:routeDialog}', 'Edit Route', '{!$Component.myFrm}'); attachRules();" > 
+    <apex:param name="routeId" value="" assignTo="{!routeId}" />
+</apex:actionFunction>
+<apex:actionFunction name="saveRoute" action="{!saveRoute}" rerender="routeTableWrapper,dialogErrors,routeDialogMainBlock" status="saveRouteStatus" oncomplete="afterSave('{!$Component.myFrm:routePgBlk:routePgBlkSec:routeDialog}', request.options.parameters.keepDialogOpen, newRoute);attachRules();">
+    <apex:param name="keepDialogOpen" value="" />
+</apex:actionFunction>
+<apex:pageBlock mode="mainDetail" id="routePgBlk">
+    <apex:facet name="header">
+        <apex:outputPanel layout="block" style="margin: 1em;">
+            <h3 style="white-space: nowrap; font-size: 125%"><apex:outputText value=" Transportation Setup"/></h3>
+            <a class="btn" style="float: right;margin-top: 1.5em;" onClick="newRoute();return false;">Add New Route</a><br /><br />
+            <h3 style="white-space: nowrap; font-size: 110%"><apex:outputText value=" Routes"/></h3>
+        </apex:outputPanel>
+    </apex:facet>
+
+    <apex:pageBlockSection columns="1" collapsible="false" title="" id="routePgBlkSec">
+        <apex:outputPanel id="routeTableWrapper" >
+            <apex:pageblockTable value="{!routeList}" var="route" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" rendered="{!AND(routeList != null, routeList.size > 0)}" >
+                <apex:column headerValue="Action"><apex:outputLink onClick="editRoute('{!route.routeId}');return false;">Edit </apex:outputLink></apex:column>
+                <apex:column headervalue="Route Name"><apex:outputText value="{!route.routeName}" /></apex:column>
+                <apex:column headervalue="Route Type"><apex:outputText value=" {!route.routeType}" /> </apex:column>
+                <apex:column headervalue="Serving Location"><apex:outputText value="{!route.serviceLocNickName}" /></apex:column>
+                <apex:column headervalue="Address"><apex:outputText value="{!route.address}" /></apex:column>
+                <apex:column headervalue="Default Vehicle"><apex:outputText value="{!route.vehicleName}" /></apex:column>
+                <apex:column headervalue="Default Driver"><apex:outputText value="{!route.driverName}" /></apex:column>
+                <apex:column headervalue="Default Start Time"><apex:outputText value="{!route.startTime}" /></apex:column>
+                <apex:column headervalue="Default End Time"><apex:outputText value="{!route.endTime}" /></apex:column>
+                <apex:column headervalue="Status"><apex:outputText value="{!route.status}" /></apex:column>
+                <apex:column headervalue="Created By"><apex:outputText value="{!route.createdBy}" /></apex:column>
+                <apex:column headervalue="Created Date"><c:UserPreferredTimePicker dateTimeVal="{!route.createdDate}" /></apex:column>
+            </apex:pageblockTable>
+            <apex:outputText value="No data to display" rendered="{!OR (routeList == null, routeList.size == 0)}" />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="routeDialog" style="display: none;">
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <apex:pageBlock id="routeDialogMainBlock">
+                <script>
+                    jQuery(document).ready(function($) {
+                        $('.timepicker').timepicker({
+                            timeFormat: 'hh:mm p',
+                            interval: 30,
+                            minTime: '0',
+                            maxTime: '11:30p',
+                            startTime: '0',
+                            dynamic: false,
+                            dropdown: true,
+                            scrollbar: true
+                        });
+                    });
+                </script>
+                <apex:pageMessages id="dialogErrors" />
+                <apex:pageblockButtons location="bottom">
+                    <apex:actionStatus id="saveRouteStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel layout="inline">
+                                <apex:commandButton value="Save" onClick="saveRoute(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveRoute(true); return false;" /> &nbsp;
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.myFrm:routePgBlk:routePgBlkSec:routeDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start"><apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /></apex:facet>
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+                <apex:inputHidden value="{!currentRoute.routeId}" />
+                <apex:pageBlockSection columns="2" collapsible="false" title="Route Details">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Route Name" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                    <apex:inputText value="{!currentRoute.routeName}" />
+                                </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Route Type" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                    <apex:selectList size="1" value="{!currentRoute.routeType}">
+                                        <apex:selectOptions value="{!routeTypeOpts}" />
+                                    </apex:selectList>
+                                </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Serving Location" />
+                            <apex:actionregion >
+                                <apex:outputPanel layout="block" styleClass="requiredInput">
+                                    <apex:outputpanel styleClass="requiredBlock" />
+                                    <c:CustomLookup id="sl" formID="myFrm" uniqueId="searchLocation" type="Service_Location__c" parentId="{!currentRoute.serviceLocId}" parentName="{!currentRoute.serviceLocName}" filters="name,city__c,state__c" return="programid__c,Location_nickname__c,street__c,city__c,state__c,zip__c,phone__c,TMN_Scope__c, Population_Served__c,Physical_location__c,Service_Type__c , Network_offering__c, Met_Data_Requirements__c" />
+                                </apex:outputPanel>
+                            </apex:actionregion>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Address" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                <apex:inputTextArea rows="2" value="{!currentRoute.address}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Default Start Time" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                <apex:inputText value="{!currentRoute.startTime}" styleClass="timepicker" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Default End Time" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                <apex:inputText value="{!currentRoute.endTime}" styleClass="timepicker"/>
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Default Vehicle" />
+                        <apex:selectList size="1" value="{!currentRoute.vehicleId}" >
+                                <apex:selectOptions value="{!defaultVehicleOpts}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Default Driver" />
+                        <apex:selectList size="1" value="{!currentRoute.driverId}" >
+                                <apex:selectOptions value="{!defaultDriverOpts}" />
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Status" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                    <apex:selectList size="1" value="{!currentRoute.Status}">
+                                        <apex:selectOptions value="{!routeStatusOpts}" />
+                                    </apex:selectList>
+                                </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+<!-- Vehicle -->
+<apex:actionFunction name="newVehicle" action="{!newVehicle}" status="myStatus" rerender="vehicleDialogMainBlock" oncomplete="openModalDialog('{!$Component.myFrm:vehiclePgBlk:vehiclePgBlkSec:vehicleDialog}', 'Add New Vehicle', '{!$Component.myFrm}'); attachRules();" immediate="true"/>
+<apex:actionFunction name="editVehicle" action="{!editVehicle}" status="myStatus" rerender="vehicleDialogMainBlock" oncomplete="openModalDialog('{!$Component.myFrm:vehiclePgBlk:vehiclePgBlkSec:vehicleDialog}', 'Edit Vehicle', '{!$Component.myFrm}'); attachRules();" > 
+    <apex:param name="vehicleId" value="" assignTo="{!vehicleId}" />
+</apex:actionFunction>
+<apex:actionFunction name="saveVehicle" action="{!saveVehicle}" rerender="vehicleTableWrapper,dialogErrors,vehicleDialogMainBlock" status="saveVehicleStatus" oncomplete="afterSave('{!$Component.myFrm:vehiclePgBlk:vehiclePgBlkSec:vehicleDialog}', request.options.parameters.keepDialogOpen, newVehicle);attachRules();">
+    <apex:param name="keepDialogOpen" value="" />
+</apex:actionFunction>
+<apex:pageBlock mode="mainDetail" id="VehiclePgBlk">
+    <apex:facet name="header">
+        <apex:outputPanel layout="block" style="margin: 1em;">
+            <a class="btn" style="float: right;margin-top: 1.5em;" onClick="newVehicle(); return false;">Add New Vehicle</a><br /><br />
+            <h3 style="white-space: nowrap; font-size: 110%"><apex:outputText value=" Vehicles"/></h3>
+        </apex:outputPanel>
+    </apex:facet>
+
+    <apex:pageBlockSection columns="1" collapsible="false" title="" id="VehiclePgBlkSec">
+        <apex:outputPanel id="vehicleTableWrapper" >
+            <apex:pageblockTable value="{!vehicleList}" var="vehicle" headerClass="tbl-header" rowClasses="tmn-row-odd, tmn-row-even" rendered="{!AND(vehicleList != null, vehicleList.size > 0)}" >
+                <apex:column headerValue="Action"><apex:outputLink onClick="editVehicle('{!vehicle.Id}');return false;">Edit </apex:outputLink></apex:column>
+                <apex:column headervalue="Vehicle Registration Number"><apex:outputText value="{!vehicle.Name}" /></apex:column>
+                <apex:column headervalue="Vehicle Year/Make/Model"><apex:outputText value="{!vehicle.Vehicle_Year_Make_Model__c}" /> </apex:column>
+                <apex:column headervalue="Serving Locations"><apex:outputText value="{!vehicle.Serving_Locations__c}" /></apex:column>
+                <apex:column headervalue="Vehicle Capacity"><apex:outputText value="{!vehicle.Vehicle_Capacity__c}" /></apex:column>
+                <apex:column headervalue="Status"><apex:outputText value="{!vehicle.Status__c}" /></apex:column>
+                <apex:column headervalue="equipment"><apex:outputText value="{!vehicle.Equipment__c}" /></apex:column>
+                <apex:column headervalue="Vin#"><apex:outputText value="{!vehicle.VIN__c}" /></apex:column>
+                <apex:column headervalue="Created By"><apex:outputText value="{!vehicle.createdBy.Name}" /></apex:column>
+                <apex:column headervalue="Created Date"><c:UserPreferredTimePicker dateTimeVal="{!vehicle.createdDate}" /></apex:column>
+            </apex:pageblockTable>
+            <apex:outputText value="No data to display" rendered="{!OR (vehicleList == null, vehicleList.size == 0)}" />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="VehicleDialog" style="display: none;">
+            <span class="ui-helper-hidden-accessible"><input type="text"/></span>
+            <apex:pageBlock id="vehicleDialogMainBlock">
+                <apex:pageMessages id="dialogErrors" />
+                <apex:pageblockButtons location="bottom">
+                    <apex:actionStatus id="saveVehicleStatus">
+                        <apex:facet name="stop">
+                            <apex:outputPanel layout="inline">
+                                <apex:commandButton value="Save" onClick="saveVehicle(false); return false;" />
+                                <apex:commandButton value="Save & New" onClick="saveVehicle(true); return false;" /> &nbsp;
+                                <apex:commandButton value="Cancel" onClick="closeModalDialog('{!$Component.myFrm:VehiclePgBlk:VehiclePgBlkSec:vehicleDialog}'); return false;" />
+                            </apex:outputPanel>
+                        </apex:facet>
+                        <apex:facet name="start"><apex:image height="16px" value="/img/loading32.gif" styleClass="dialogLoadingSpinner" /></apex:facet>
+                    </apex:actionStatus>
+                </apex:pageblockButtons>
+                <apex:pageBlockSection columns="2" collapsible="false" title="Vehicle Details">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Vehicle Registration Number" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                    <apex:inputText value="{!currentVehicle.Name}" />
+                                </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Vehicle Year/Make/Model" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                <apex:inputText value="{!currentVehicle.Vehicle_Year_Make_Model__c}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!currentVehicle.Vehicle_Capacity__c}" required="true"/>
+                    <apex:inputField value="{!currentVehicle.Status__c}" />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="Serving Locations" />
+                            <apex:actionregion >
+                                <apex:outputPanel layout="block" styleClass="requiredInput">
+                                    <apex:outputpanel styleClass="requiredBlock" />
+	                                    <apex:selectList size="4" multiselect="true" value="{!currVhclLocations}">
+	                                        <apex:selectOptions value="{!serviceLocationsForMyOpGrp}" />
+	                                    </apex:selectList>
+                                </apex:outputPanel>
+                            </apex:actionregion>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputField value="{!currentVehicle.Equipment__c}" />
+                    <apex:pageBlockSectionItem >
+                        <apex:outputlabel value="VIN" />
+                            <apex:outputPanel layout="block" styleClass="requiredInput">
+                                <apex:outputpanel styleClass="requiredBlock" />
+                                <apex:inputText value="{!currentVehicle.VIN__c}" />
+                            </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+</apex:form>
+<apex:actionStatus id="myStatus">
+    <apex:facet name="start">
+        <div class="thinking">
+            <div class="thinkingwheel">
+                <span><img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />&nbsp; Processing...</span>
+            </div>
+        </div>
+    </apex:facet>
+    <apex:facet name="stop"></apex:facet>
+</apex:actionStatus>
+</apex:page>

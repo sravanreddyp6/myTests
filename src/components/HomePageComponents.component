@@ -45,7 +45,7 @@
 	</style>
 	<apex:attribute name="objectName" type="string" description="this is the object name" required="true" />
 
-	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Content Administration',tileCont,if(objectName=='Provider Management', tmnProviderViewable ,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,false)))))))}">
+	<apex:outputPanel rendered="{!(if(objectName=='Referrals',RefView,if(objectName=='Content Administration',tileCont,if(objectName=='Provider Management', tmnProviderViewable ,if(objectName=='Contract Management',ContractView,if(objectName=='Documents',DocView,if(objectName=='Incidents',IncView,if(objectName=='Documents',DocView,if(objectName=='Transportation',transportationAdmin,false)))))))))}">
 		<div class="panel panel-success" style="display:inline-block; vertical-align:top">
 			<div class="panel-heading">{!objectName}</div>
 				<div class="panel-body">
@@ -92,8 +92,14 @@
 <!-- 						<a href="/apex/incidentsListView?flag=ALL">View All Incidents</a><br /> -->
 					</apex:outputPanel>
 
+                    <apex:outputPanel layout="none" rendered="{!objectName=='Transportation'}">
+                        <apex:outputPanel rendered="{!transportationAdmin}" >
+                            <a href="/apex/T_TransportationSetup">Routes Setup</a><br />
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    
 				<!-- <a href="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</a> -->
-				<apex:outputPanel rendered="{!objectName!='Content Administration' && objectName!='Incidents' }"><apex:outputLink value="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</apex:outputLink><br /></apex:outputPanel>
+				<apex:outputPanel rendered="{!objectName!='Content Administration' && objectName!='Incidents' && objectName!='Transportation' }"><apex:outputLink value="/apex/ReportListView?object={!URLENCODE(objectName)}">Reports</apex:outputLink><br /></apex:outputPanel>
 			</div>
 		</div>
 	</apex:outputPanel>

@@ -40,6 +40,11 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 	public Map<Id, Boolean> editableTasks { get; set; }
 	public Boolean isCambridge { get; set; }
 	public Boolean isCareMeridian{get; set;}
+    public Boolean monCheck {get; set;}
+    public Boolean tueCheck {get; set;}
+    public Boolean wedCheck {get; set;}
+    public Boolean thurCheck {get; set;}
+    public Boolean friCheck {get; set;}
     
     //Diagnosis changes
     public list<Diagnosis__c> diagnoses{get; set;}
@@ -684,6 +689,8 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		query = query.substring(0, query.length() - 2);
 		query += ' FROM Funding_Source__c WHERE Id=\'' + fundingSource.Id + '\' ORDER BY Type_of_Coverage__c LIMIT 1';
 		fundingSource = Database.query(query);
+        if(referralRecordType == 'Adult Day Health')
+            retrieveDaysAuthorized();
 	}
 
 	public void saveFundingSource() {
@@ -694,7 +701,8 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		if (String.valueOf(this.fundingSource.Id) == '') {
 			this.fundingSource.Id = null;
 		}
-
+        if(referralRecordType == 'Adult Day Health')
+            daysAuthorizedUpdate();
 		try {
 			upsert this.fundingSource;
 		}
@@ -707,7 +715,62 @@ public with sharing class referral_Controller2 implements AuthenticatedAction {
 		this.fundingSource = new Funding_Source__c();
 		this.fundingSource.RecordTypeId = Utility.getFundingSourceRecordTypeFromReferral(this.ReferralRecord);
 		fundingSource.Referral__c = this.referralRecord.Id;
+        if(referralRecordType == 'Adult Day Health')
+            retrieveDaysAuthorized();
 	}
+    
+    public void daysAuthorizedUpdate(){
+        
+        String[] daysCheck = new String[]{};
+            
+        if(monCheck){
+            daysCheck.add('Mo');
+        }
+        if(tueCheck){
+            daysCheck.add('Tu');
+        }
+        if(wedCheck){
+            daysCheck.add('We');
+        }
+        if(thurCheck){
+            daysCheck.add('Th');
+        }
+        if(friCheck){
+            daysCheck.add('Fr');
+        }
+        if(daysCheck.size() > 0){
+            this.fundingSource.Days_Authorized__c = string.join(daysCheck, ',');
+        }
+        else{
+            this.fundingSource.Days_Authorized__c = '';
+        }
+    }
+
+    public void retrieveDaysAuthorized(){
+        if(this.fundingSource.Id != null){
+            String str = this.fundingSource.Days_Authorized__c;
+            if(str != null){
+                if (str.contains('Mo')) {
+                    monCheck = true;
+                }
+                if (str.contains('Tu')) {
+                    tueCheck = true;
+                }
+                if (str.contains('We')) {
+                    wedCheck = true;
+                }
+                if (str.contains('Th')) {
+                    thurCheck = true;
+                }
+                if (str.contains('Fr')) {
+                    friCheck = true;
+                }
+            }
+        }else{
+            monCheck = false; tueCheck = false; wedCheck = false; thurCheck = false; friCheck = false;
+        }
+       
+    }      
 
 	public void showAddRelParty() {
 		relParty = new Related_Party__c();
