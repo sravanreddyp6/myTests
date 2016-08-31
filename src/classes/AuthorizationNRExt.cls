@@ -3,6 +3,11 @@ public with sharing class AuthorizationNRExt {
 public string saID { get; set; }
 public ID admID { get; set; }
 public ID pbsID { get; set; }
+public Boolean monCheck {get; set;}
+public Boolean tueCheck {get; set;}
+public Boolean wedCheck {get; set;}
+public Boolean thurCheck {get; set;}
+public Boolean friCheck {get; set;}
 
 public Authorization__c authorization { get; set; }
 public service_assignment__c theSA {get; set;}
@@ -23,7 +28,7 @@ public String mapdepPL2 {get{return JSON.serialize(dependentPL2);}}
 public AuthorizationNRExt(ApexPages.StandardController controller) {
     if (!Test.isRunningTest()) {
         controller.addFields(new List<String>{'Original_Auth__c','Authorization_Status__c','Requested_By__c','Request_Date__c','Request_Contact_Name__c','Request_Phone__c','Request_Fax__c','Received_From__c','Days_Authorized__c','Days_Authorized_from__c',
-            'Parent_Auth__c', 'Representing_Received__c', 'Reference_Number__c', 'Reviewed_By__c'});
+            'Parent_Auth__c', 'Representing_Received__c', 'Reference_Number__c', 'Reviewed_By__c', 'Days_Authorized_InWeek__c'});
     }
         authorization = (Authorization__c)controller.getRecord();
         saID = ApexPages.currentPage().getParameters().get('saID'); 
@@ -82,6 +87,8 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
     canFinalize = true; //udpate with perms later
     
     hasDraft = false;
+    if ( theSA.Flavor__c=='Adult Day Health')
+            retrieveDaysAuthorized();
     
     // get a list of auths with the same ultimate parent auth, or same direct parent  
     relatedAuthsList = new list<authorization__c> ();
@@ -164,6 +171,7 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
                 
             } 
         }
+       
                                       
         if ( fielderrs.size() > 0 ) {
         
@@ -175,7 +183,8 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
             return null;
             //       
         }
-      
+        if ( theSA.Flavor__c=='Adult Day Health')
+            daysAuthorizedUpdate();
         upsert authorization;
         return redirectToView( authorization.Id, theSA.id ); 
         }
@@ -274,7 +283,53 @@ public AuthorizationNRExt(ApexPages.StandardController controller) {
         }
     }
     
-
-            
+    public void daysAuthorizedUpdate(){
         
+        String[] daysCheck = new String[]{};
+            
+        if(monCheck){
+            daysCheck.add('Mo');
+        }
+        if(tueCheck){
+            daysCheck.add('Tu');
+        }
+        if(wedCheck){
+            daysCheck.add('We');
+        }
+        if(thurCheck){
+            daysCheck.add('Th');
+        }
+        if(friCheck){
+            daysCheck.add('Fr');
+        }
+        if(daysCheck.size() > 0){
+            authorization.Days_Authorized_InWeek__c = string.join(daysCheck, ',');
+        }
+        else{
+            authorization.Days_Authorized_InWeek__c = '';
+        }
+    }
+    
+    public void retrieveDaysAuthorized(){
+        if(authorization.Id != null){
+            String str = authorization.Days_Authorized_InWeek__c;
+            if(str != null){
+                if (str.contains('Mo')) {
+                    monCheck = true;
+                }
+                if (str.contains('Tu')) {
+                    tueCheck = true;
+                }
+                if (str.contains('We')) {
+                    wedCheck = true;
+                }
+                if (str.contains('Th')) {
+                    thurCheck = true;
+                }
+                if (str.contains('Fr')) {
+                    friCheck = true;
+                }
+            }
+        }
+    }        
 }

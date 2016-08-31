@@ -20,8 +20,8 @@
  *	h.Checking the existence of Required buttons and Related lists
  *	i.Negative case to check the non-existence of certian buttons and Fields
  *
- *LastModifiedBy:
- *LastModifiedReason:
+ *LastModifiedBy: Adam Vernatter 06/14/2016
+ *LastModifiedReason: Updated for PBS view edit page split June 2016
  * 
  * 
  * 
@@ -40,7 +40,6 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("pbseditnewCM", suiteTimeout, {
 	  "Should validate the field entries on PBS page and validate the existense required buttons/related lists for CM": function(client, done) {
-		  //var user = users["CM_DON"];
 		  var today = new Date().getMilliseconds() + new Date().getDate();
 		  var firstName = 'Regression '+today;
 		  var lastName = 'CM PBS '+today;
@@ -51,107 +50,10 @@ testSuite("pbseditnewCM", suiteTimeout, {
 			  var birthday = new Date(birthdateString);
 			  return~~ ((Date.now() - birthday) / (31557600000)) + ' Years';
 		  }
-		  var alias; 
+		  var alias;
+		  var pbsUrl;
 		  
 	    client = client
-	    
-	     /* .logInAs(user)
-	      .click("a=Create New Referral")
-	      .waitForVisible("input[value='Create Person Being Referred']", defaultOperationTimeout)
-	      .fillInputText("First Name", firstName)
-	      .chooseSelectOption("Race", "Caucasian")
-	      .fillInputText("Middle Name", middleName)
-	      .chooseSelectOption("Ethnicity", "Unknown")
-	      .fillInputText("Last Name", lastName)
-	      .chooseSelectOption("Marital Status", "Divorced")
-	      .fillInputText("Date of Birth", "7/7/1970")
-	      .chooseSelectOption("Highest Level of Education", "Graduate School")
-	      .chooseSelectOption("Gender", "Male")
-	      .fillInputText("Additional Information / Comments", "Some additional Information")
-	      .fillInputText("Mailing Street 1", "123 Something Street")
-	      .fillInputText("Mailing Street 2", "apt. 456")
-	      .fillInputText("Mailing City", "Some City")
-	      .fillInputText("Mailing Zip/Postal Code", "23456")
-	      .fillInputText("Mailing County", "Orange County")
-	      .chooseSelectOption("Mailing State/Province", "California")
-	      .setValue("input[id$=Perm_Phone]", "6090210")
-	      .setValue("input[id$=Perm_Email]", "someone@something.com")
-	      .click("input[value='Create Person Being Referred']")
-	      .waitForVisible("input[value='Save Referral']", defaultOperationTimeout)
-	      .fillInputText("Anticipated Admission DateTime", "12/30/2015 16:00") 
-	      .click("input[value='Add Related Party']")
-	      .waitForVisible("span[id$=relatedPartyModal]", defaultOperationTimeout)
-	      .fillInputText("Party Name", "Anakin Skywalker")
-	      .chooseSelectOption("Type", "Family/Friends")
-	      .click("span[id$=relatedPartyModal] input[value=Save]")
-	      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
-	      .fillInputText("Referral Source", "Mentor")
-	      .fillInputText("Referrer Name", "Obi-wan Kennobi")
-	      .fillInputText("Current Location", "Boston")
-	      .selectLookup("Evaluated By")
-	      .switchToNextWindow()
-	      .waitForExist("#searchFrame", defaultOperationTimeout)
-	      .element("#searchFrame")
-	      .then(function (frame) { return frame.value; })
-	      .then(client.frame)
-	      .setValue("input#lksrch", user["first_name"] + " " + user["last_name"])
-	      .click("input[value*='Go']")
-	      .frameParent()
-	      .waitForExist("#resultsFrame", defaultOperationTimeout)
-	      .element("#resultsFrame")
-	      .then(function (frame) { return frame.value; })
-	      .then(client.frame)
-	      .click("#TMN_User__c_body tr.dataRow th a")
-	      .switchToNextWindow()
-	      .click("a[id$=originlookup]")
-	      .waitForVisible("input[id$=originstate]", defaultOperationTimeout)
-	      .setValue("input[id$=originstate]","CA")
-	      .click("span[id$=searchDialog2] input[value='Search!']")
-	      .waitForVisible("span[id$=searchDialog2] a", defaultOperationTimeout)
-	      .element("span[id$=searchDialog2] a")
-	      .then(function (el) {
-	      return this.elementIdClick(el.value.ELEMENT);
-	      })
-	      .waitForVisible("input[value='Add Location']", defaultOperationTimeout)
-	      .getOutputTextFromInput("Alias")
-	      .then(function(text){
-	    	  alias = text;
-	      })
-	      .click("input[value='Add Location']")
-	      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
-	      .chooseSelectOption("Rank", "Primary")
-	      .selectByValue("select[id$=locationEntry_Status]", "Active")
-	      .click("a[id$=aliaslookup]")
-	      .waitForVisible("input[value='First']", defaultOperationTimeout)
-	      .setValue("input[id$=addlocationstate]","CA")
-	      .click("span[id$=searchDialog] input[value='Search!']")
-	      .waitForVisible("span[id$=searchDialog] a", defaultOperationTimeout)
-	      .element("span[id$=searchDialog] a")
-	      .then(function (el) {
-	      	return this.elementIdClick(el.value.ELEMENT);
-	      })
-	      .waitForVisible("span[id$=ReferralLocationModal] input[value='Save']", defaultOperationTimeout)
-	      .click("span[id$=ReferralLocationModal] input[value='Save']")
-	      .waitForActionStatusDisappearance("myStatus", defaultOperationTimeout)
-		  .waitForVisible("input[value='Add Funding Source']", defaultOperationTimeout)
-	      .click("input[value='Add Funding Source']")
-	      .waitForVisible("span[id$=FundingSourceModal]", defaultOperationTimeout)
-	      .chooseSelectOption("Coverage Level", "Primary")	
-	      .selectCheckbox("More than 1.5 Yrs of Disability")
-	      .selectCheckbox("ALS/ESRD/Black Lung Disease")
-	      .selectCheckbox("Patient Over 64 Years of Age")
-	      .click("span[id$=FundingSourceModal] input[value='Save']")
-	      .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)
-	      
-	      .click("input[value='Save Referral']")      
-	      .waitForVisible("input[value='Convert']", defaultOperationTimeout)
-	      .click("input[value='Convert']")
-	      .waitForVisible("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']", defaultOperationTimeout)
-	      .click("span[id$=ReferralAdmissionLocationModal] input[value='Save and Continue']")
-	      .waitForVisible("input[value='Confirm Conversion']", defaultOperationTimeout)
-	      .click("input[value='Confirm Conversion']")
-	      
-	      .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)*/
 	    
 	    .execUtil("convert_referral",{
 			operatingGroup: "Care Meridian",
@@ -170,35 +72,51 @@ testSuite("pbseditnewCM", suiteTimeout, {
 				}
 			}
 		})  
-	    
+	      
+		  .url()
+		  .then(function (url){
+			  pbsUrl = url.value;
+		  })
+		  
 	      .click("a=iServe Home")
-	    //Search for the PBS using first name and Last name
+		  
+	      //Search for the PBS using first name and last name
+		  .then(function () { console.log('Starting PBS Search by Name'); })
 	      .addValue("[id$=PbsSearchFirstName]",firstName) //Seeing weird behavior if FillinputText is used
 	      .addValue("[id$=PbsSearchLastName]",lastName)
 	      .click("input[type='submit'][value='Find']", defaultOperationTimeout)
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
 	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
-	      
 	      //Filter the Search result in the table by exactly inputting the name
+		  .then(function () { console.log('Filtering PBS search by name'); })
 	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
 	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
-	      //.waitForValue("a=Vader835, Darth835", defaultOperationTimeout)
 	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
 	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
-	      //.waitForVisible("table#serviceAssignmentTable", defaultOperationTimeout)
-	      //.click("table#serviceAssignmentTable tbody tr:nth-child(1) td:nth-child(1) a")
-	      //Navigate to PBS view Page
-	      .waitForValue("a="+firstName+' '+lastName, defaultOperationTimeout)
-	      .click("a="+firstName+' '+lastName)
-          .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
-         
+		  .then(function () { console.log('Select PBS after searching by name'); })
+	      .waitForValue("a="+lastName+', '+firstName, defaultOperationTimeout)
+	      .click("a="+lastName+', '+firstName)
+		  .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+          .waitForVisible("input[value='Find']", defaultOperationTimeout)
+
           //Go back to home page and find the same PBS by choosing Program
+		  .then(function () { console.log('Reload iServe home for PBS search by program'); })
           .windowHandleMaximize()
           .click("a=iServe Home")
-          .then(function(){
-        	  return this.selectByValue("[id$='selectprograms']", alias);
-          })
-          
+		  .addValue("[id$=PbsSearchProgram]",'114160')
+	      .click("input[type='submit'][value='Find']", defaultOperationTimeout)
+	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+	      .waitForVisible("span[id$=searchResultDialog]", defaultOperationTimeout)
+		  .then(function () { console.log('Filtering PBS search by program'); })
+	      .setValue("#searchResultDialog input[type='search']", lastName+', '+firstName+ " Served")
+	      .pause(1000) //Waiting for a second so that j-query data table can search the record. No side effect of waiting as user will wait till the search returned the result
+	      .click("table[id$=searchTable] tbody tr:nth-child(1) td:nth-child(1) a")
+	      .waitForActionStatusDisappearance("pageProcessing", defaultOperationTimeout)
+		  .then(function () { console.log('Select PBS after searching by program'); })
+	      .waitForValue("a="+lastName+', '+firstName, defaultOperationTimeout)
+	      .click("a="+lastName+', '+firstName)
+          .waitForVisible("input[value='Find']", defaultOperationTimeout)
+		  
 		   //Below function makes sure to find the PBS even if the table is paginated
 		    var choosePbs = function (client) {
 		    	client.pause(2000)
@@ -219,7 +137,11 @@ testSuite("pbseditnewCM", suiteTimeout, {
 		    };
 		    
 		   client = choosePbs(client)
-		   
+		  //Navigate to PBS page to edit record
+		  .then(function(){
+			this.url(pbsUrl)	  
+		  })
+		  .then(function () { console.log('Start PBS edit page testing'); })
 		  .waitForVisible("input[value='Edit Person Being Served']", defaultOperationTimeout)
           .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -233,7 +155,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .fillInputText("First Name", "")
 	      .fillInputText("Middle Name", "")
 	      .fillInputText("Last Name", "")
-	     
+		  .then(function () { console.log('Check validation rule for first name'); })
 	      
 	      //.fillInputText("Does the person Identify with a gender other than legal gender selected?", "")
 	      .scroll("input[value='Save']", 0, -300)
@@ -244,10 +166,12 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      
 	      .fillInputText("First Name", firstName)
 	      .fillInputText("Middle Name", middleName)
+		  .then(function () { console.log('Check validation rule for last name'); })
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Last Name: You must enter a value")
 	      .fillInputText("Last Name", lastName)
+		  .then(function () { console.log('Check validation rule for date of birth'); })
 	      .click("input[value='Save']")
 	      .getText("#msgs*=Date of Birth: You must enter a value")
 	      .fillInputText("Date of Birth", "01/12/1988")
@@ -256,13 +180,16 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      .chooseSelectOption("Does the person Identify with a gender other than legal gender selected?","Yes")
 	      .waitForVisible("input[id$='genderIdentity']", defaultOperationTimeout)
 	      .addValue("input[id$='genderIdentity']", "")
+		  .then(function () { console.log('Check validation rule for gender identity'); })
 	      .scroll("input[value='Save']", 0, -300)
 	      .click("input[value='Save']")
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
 	      .getText("#msgs*=Gender Identity is required when the person identifies with a gender other than the legal gender")
 	      .fillInputText("Gender Identity", "Test")
+		  .scroll("input[value='Save']", 0, -300)
 	      .click("input[value='Save']")
 	      
+		  .then(function () { console.log('Fill in remaining fields'); })
 	      .waitForVisible("input[type='submit'][value='Edit Person Being Served']", defaultOperationTimeout)
 	      .click("input[value='Edit Person Being Served']", defaultOperationTimeout)
 	      .waitForVisible("input[value='Save']", defaultOperationTimeout)
@@ -304,6 +231,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      
 	      
 	      //Validating output field values in view mode
+		  .then(function () { console.log('Validate fields on view screen'); })
 	      .getOutputText("First Name")
 	      .then(function(text){
 	    	  assert.equal(firstName, text.trim());
@@ -471,6 +399,7 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	      })
 	      
 	       //These buttons/sections SHOULD present on the Page
+		  .then(function () { console.log('Validate buttons are visible'); })
 	      .isExisting("input[value='Add Related Party']")
 	      .then(function(isExist){
 	    	  assert(isExist);
@@ -520,12 +449,14 @@ testSuite("pbseditnewCM", suiteTimeout, {
 	    	  assert(isExist);
 	      })
 	      //These buttons should NOT exist on the Page
+		  .then(function () { console.log('Validate the buttons that should not be present on the page'); })
 	      .isExisting("input[value='Add Agency Involved With Individual']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
 	      })
 	      
 	      //These fields should NOT exist on the Page
+		  .then(function () { console.log('Validate the fields that should not be present on the page'); })
 	      .isExisting("label[name='Family Annual Income']")
 	      .then(function(isExist){
 	    	  assert(!isExist);
