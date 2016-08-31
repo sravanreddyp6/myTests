@@ -598,6 +598,16 @@
                  </apex:pageBlockSectionItem>
 
                 <apex:outputField value="{!theServAssign.Program_Detail__c}" />
+                
+                <apex:pageBlockSectionItem rendered="{!isADH}">
+                    <apex:outputLabel for="serviceReq" value="Service Requested" />
+                    <apex:outputPanel >
+                        <div class="requiredInput">
+                            <div class="requiredBlock"></div>
+                            <apex:inputField id="serviceReq" value="{!theServAssign.Service_Requested__c}" />
+                        </div>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
 
                 <apex:inputField value="{!theServAssign.Episode__c}" rendered="{!!((vfVarIsCM && !isLudlow) || isNR || isADH)}" required="{!episodeReq}" />
                 <apex:inputfield value="{!theServAssign.Clinician__c}" rendered="{! (vfVarIsCB || isCAFSS)}" />

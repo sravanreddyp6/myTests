@@ -293,7 +293,7 @@
 										</apex:outputLink>
 
                                          <apex:outputLink styleClass="servicelink"
-                                         	onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!(opGrp == 'Care Meridian' || isPersonSummary)  }">
+                                         	onclick="window.open('{!$Page.PersonSummary}?Id={!con.id}', 'PersonSummary'); return false;" rendered="{!(opGrp == 'Care Meridian' || con.Flavor__c == 'Adult Day Health' || isPersonSummary)  }">
                                             Person Summary
                                         </apex:outputLink>
                                     </td>
