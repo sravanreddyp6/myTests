@@ -699,7 +699,7 @@ public with sharing class HomePageController{
             if ( p.servAliasOpGrp == 'Redwood' && rwstates.contains(p.servState) && p.servState != 'OH' && p.flavor != 'CA FSS')
                 navList.add(new SelectOption(string.format('/{0}#Asmt', new String[]{p.admId}), 'Risk Assessment'));
 
-            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA' || p.servState == 'OH' )) )
+            if ( p.servAliasOpGrp == 'Care Meridian' || ( p.servAliasOpGrp == 'Redwood' && (p.servState == 'MN' || p.servState == 'IA' || p.servState == 'OH' ) || p.Flavor == 'Adult Day Health') )
                 navList.add(new SelectOption(string.format('/{0}#Assessment_res', new String[]{p.saId}), 'Seizures'));
 
             if (!rwLevel1 || p.servState == 'IA') // everyone except level 1, unless in IA

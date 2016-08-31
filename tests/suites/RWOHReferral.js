@@ -7,7 +7,7 @@ var defaultOperationTimeout = 30 * 1000;
 
 testSuite("RWOHReferral", suiteTimeout, {
   "should create a Redwood OH Referral successfully": function(client, done) {
-	var user = users["RWPR_OH"];
+	var user = users["RW_PROH"];
 	var d=new Date();
 	var date = ("0" + (d.getMonth()+1)).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + "/" + d.getFullYear();
     return client
@@ -123,9 +123,9 @@ testSuite("RWOHReferral", suiteTimeout, {
         .switchToNextWindow()
 		.chooseSelectOption("Status", "New")
         .click("span[id$=ReferralLocationModal] input[value='Save']")
-		.getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
+        .getSelectOptionsBySelector("select[id$='servicesRequested_unselected']")
 		.then(function(ServicesRequested) {
-			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"], ServicesRequested);
+			assert.deepEqual(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"], ServicesRequested);
 		})		
 	    .chooseMultiSelectOption("Services Requested", ["WGH"])
 		.fillInputText("Prior Program Information", "Prior Program Information Test")
@@ -175,5 +175,17 @@ testSuite("RWOHReferral", suiteTimeout, {
 		.fillInputText("If Yes, Length of time","If Yes, Length of time Test")
 		.selectCheckbox("Can Live with Opposite Sex")
 		.selectCheckbox("Aversive Procedures Currently in Place")
+		.click("input[value='Add Funding Source']")
+        .waitForVisible("span[id$=FundingSourceModal] input[value='Save']", defaultOperationTimeout)
+        .getSelectOptions("Funding Source")
+        .then(function(funSource) {
+         assert.deepEqual(["", "Autism Scholarship", "Family Waiver", "ICFIID", "IO Waiver", 
+         					"JP Scholarship", "Level 1", "Local Funding", "Private Pay", 
+         					 "Self Waiver", "United Healthcare"], funSource);
+         })
+	    .chooseSelectOption("Funding Source", "United Healthcare")
+	    .click("span[id$=FundingSourceModal] input[value='Cancel']")
+        .waitForActionStatusDisappearance("saveFundingSourceStatus", defaultOperationTimeout)   
+  
   }
 });
