@@ -2,7 +2,7 @@ public with sharing class PB_networkselectionController {
 	public list<selectOption> networkOfferings {get;set;}
 	public string selectedNetwork {get;set;}
 	public String documentType { get; set; }
-
+//Adam was here - creating diff to test ETTI CI job
 	public PB_networkselectionController(){
 		networkOfferings = new List<selectOption>();
 		networkOfferings.add(new selectoption('', '--None--'));
