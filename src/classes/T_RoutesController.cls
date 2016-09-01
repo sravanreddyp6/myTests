@@ -90,8 +90,7 @@ public list<SelectOption> getDefaultDriverOpts(){
 	String myAlias = [select operating_group__c, alias_lookup__c from tmn_user__c where Salesforce_User_Account__c=:UserInfo.getUserId() limit 1].alias_lookup__c;
     list<Id> driverPermUsers = new list<Id>(); 
 	//Filter the TMN Users to only the drivers
-	//[Select Id,  (select Id, PermissionSetId, AssigneeId, Assignee.Name from Assignments) from permissionset Where name = 'T_Transportation_Drivers'];
-    for(permissionsetAssignment psA : [SELECT Id, PermissionSetId, AssigneeId, Assignee.Name, SystemModstamp from permissionsetAssignment where PermissionSetId in (SELECT Id from permissionset where name = 'T_Transportation_Drivers')]){
+    for(permissionsetAssignment psA : [SELECT Id, PermissionSetId, AssigneeId, Assignee.Name, SystemModstamp from permissionsetAssignment where PermissionSetId in (SELECT Id from permissionset where name = 'T_Transportation_Driver')]){
     	driverPermUsers.add(psA.AssigneeId);
     }
     list<SelectOption> lst = new list<SelectOption>();
