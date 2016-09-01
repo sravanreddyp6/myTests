@@ -2413,7 +2413,7 @@ public without sharing class ServiceAssignmentExt {
     public void populateAuths() {
         //system.debug( 'SHOW DISREGARD = ' + authsIncDisregard + ', ' + theServAssign.Id);
         ID saID = theServAssign.Id;
-        String query = '' + 'select id, funding_Source__c, payer_authorization_id__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c ' +
+        String query = '' + 'select id, funding_Source__c, payer_authorization_id__c, Authorization_Number__c, Days_Authorized_from__c , Days_Authorized_To__c, authorization_Status__c, type__c, service_being_Funded_string__c, rate__c, rate_unit__c, level__c, payer_effective_Date__c, payer_end_date__c, received_date_time__c, contract_used__c ' +
                  'from Authorization__c' +
                  ' where funding_source__r.Service_Assignment__c = :saID ' +
                  (authsIncDisregard ? ''  : 'and authorization_status__c != \'Disregard\'') +
