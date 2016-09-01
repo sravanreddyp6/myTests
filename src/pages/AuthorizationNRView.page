@@ -86,32 +86,32 @@ var j$ = jQuery.noConflict();
     </apex:pageBlockSection>  
 </apex:pageBlock>
 </apex:form>
-
-        <apex:pageBlock id="authList" title="Related Authorizations" >
-            <apex:outputText value="No Authorizations to display" rendered="{!(relatedAuthsList.size=0)}" />
+    <apex:pageBlock id="authList" title="Related Authorizations" >
+        <apex:outputText value="No Authorizations to display" rendered="{!(relatedAuthsList.size=0)}" />
         <apex:pageBlockTable value="{!relatedAuthsList}" var="auth" rendered="{! relatedAuthsList.size!=0  }">
-                <apex:column headervalue="Action">
+            <apex:column headervalue="Action">
                 <a href="/apex/AuthorizationNRView?id={!auth.ID}&saID={!saID}">View</a>
-                    <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
-                        &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!thesa.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
-                    </apex:outputPanel>
-                </apex:column>
-                <apex:column headervalue="Received">
-                    <c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
-                </apex:column>
-                <apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number"/>
-                <apex:column value="{!auth.Type__c}" headervalue="Type"/>
-                <apex:column value="{!auth.Reason_for_New_Authorization__c}" headervalue="Reason for Auth"/>
-                <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service"/>
-                <apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
-                <apex:column value="{!auth.Rate_unit__c}" headervalue="Per"/>
-                <apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start Date"/>
-                <apex:column value="{!auth.Payer_End_Date__c}" headervalue="End Date"/>
-                <apex:column value="{!auth.Authorization_Status__c}" headervalue="Status"/>
-                
-            </apex:pageBlockTable>
-        </apex:pageBlock>
-
+                <apex:outputPanel layout="none" rendered="{!auth.Authorization_Status__c != 'Active Final' && auth.Authorization_Status__c != 'Disregard' && auth.Authorization_Status__c != 'Inactive Final'}" >
+                    &nbsp;|&nbsp;<a href="/apex/AuthorizationNREdit?id={!auth.Id}&saID={!thesa.ID}&retURL={!URLENCODE($CurrentPage.URL)}">Edit</a>
+                </apex:outputPanel>
+            </apex:column>
+            <apex:column headervalue="Received">
+                <c:MilitaryDatetime datetimeval="{!auth.Received_Date_Time__c}" />
+            </apex:column>
+            <apex:column value="{!auth.Payer_Authorization_ID__c}"  headervalue="Authorization Number" rendered="{!!isADH}" />
+            <apex:column value="{!auth.Authorization_Number__c}"  headervalue="Authorization Number" rendered="{!isADH}" />
+            <apex:column value="{!auth.Type__c}" headervalue="Type"/>
+            <apex:column value="{!auth.Reason_for_New_Authorization__c}" headervalue="Reason for Auth"/>
+            <apex:column value="{!auth.Service_Being_Funded_String__c}" headervalue="Item/Service"/>
+            <apex:column value="{!auth.Rate__c}" headervalue="Rate"/>
+            <apex:column value="{!auth.Rate_unit__c}" headervalue="Per"/>
+            <apex:column value="{!auth.Payer_Effective_Date__c}" headervalue="Start Date" rendered="{!!isADH}" />
+            <apex:column value="{!auth.Payer_End_Date__c}" headervalue="End Date" rendered="{!!isADH}" />
+            <apex:column value="{!auth.Days_Authorized_from__c}" headervalue="Start Date" rendered="{!isADH}" />
+            <apex:column value="{!auth.Days_Authorized_To__c}" headervalue="End Date" rendered="{!isADH}" />
+            <apex:column value="{!auth.Authorization_Status__c}" headervalue="Status"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
 
 <c:SObjectNotesAndAttachments parentId="{!authorization.Id}" parentPage="Authorization" pbsID="{!theSA.Person_Being_Served__c}" servAssignId="{!theSA.id}" admId="{!theSA.Admission__c}" /> 
 <div style = "display: none;">
